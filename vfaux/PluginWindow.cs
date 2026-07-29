@@ -19,7 +19,7 @@ internal class PluginWindow : Window
     private const int BoardSize = 150;
     private const int CellSize = 20;
 
-    public PluginWindow(BoardState gameBoard, Solver solver) : base("Easier Faux Hollows")
+    public PluginWindow(BoardState gameBoard, Solver solver) : base("Easier Faux Hollows－幻巧拼圖###Easier Faux Hollows")
     {
         Size = new Vector2(1200, 1000);
         SizeCondition = ImGuiCond.Once;
@@ -29,18 +29,18 @@ internal class PluginWindow : Window
 
     public override void Draw()
     {
-        ImGui.Checkbox("Solver strategy: always find swords first", ref _solver.FindSwordsFirst);
+        ImGui.Checkbox("求解策略：優先尋找長劍###Solver strategy: always find swords first", ref _solver.FindSwordsFirst);
 
         if (ImGui.BeginTabBar("Tabs"))
         {
-            if (ImGui.BeginTabItem("Current game board"))
+            if (ImGui.BeginTabItem("目前拼圖###Current game board"))
             {
                 DrawBoardTab(_gameBoard, false);
                 ImGui.EndTabItem();
             }
-            if (ImGui.BeginTabItem("Debug board"))
+            if (ImGui.BeginTabItem("偵錯拼圖###Debug board"))
             {
-                if (ImGui.Button("Randomize!"))
+                if (ImGui.Button("隨機產生"))
                 {
                     var rng = new Random();
                     _simSheet = _solver.PatternDB.KnownPatterns[rng.Next(_solver.PatternDB.KnownPatterns.Count)];
@@ -50,7 +50,7 @@ internal class PluginWindow : Window
                     SimBoardReset();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("Reset tiles"))
+                if (ImGui.Button("重設格子"))
                 {
                     SimBoardReset();
                 }
@@ -59,7 +59,7 @@ internal class PluginWindow : Window
             }
             for (int i = 0; i < _solver.PatternDB.KnownPatterns.Count; ++i)
             {
-                if (ImGui.BeginTabItem($"P{i}"))
+                if (ImGui.BeginTabItem($"圖樣 {i}###P{i}"))
                 {
                     DrawSheet(_solver.PatternDB.KnownPatterns[i], null);
                     ImGui.EndTabItem();
@@ -76,11 +76,11 @@ internal class PluginWindow : Window
         var sheet = _solver.MatchingSheet(board);
         if (sheet == null)
         {
-            ImGui.TextUnformatted("Pattern not found!");
+            ImGui.TextUnformatted("找不到符合的圖樣！");
         }
         else
         {
-            ImGui.TextUnformatted($"Current pattern: {_solver.PatternDB.KnownPatterns.IndexOf(sheet)}");
+            ImGui.TextUnformatted($"目前圖樣：{_solver.PatternDB.KnownPatterns.IndexOf(sheet)}");
             DrawSheet(sheet, board);
         }
     }
@@ -97,7 +97,7 @@ internal class PluginWindow : Window
             for (int x = 0; x < BoardState.Width; ++x)
             {
                 var t = solution[tileIndex];
-                if (ImGui.Button($"{board.Tiles[tileIndex]} ({t}{(t == bestScore ? "*" : "")})###{x}x{y}", new(100, 0)) && interactable)
+                if (ImGui.Button($"{TileName(board.Tiles[tileIndex])} ({t}{(t == bestScore ? "*" : "")})###{x}x{y}", new(100, 0)) && interactable)
                 {
                     SimBoardOpen(x, y);
                 }
@@ -106,6 +106,41 @@ internal class PluginWindow : Window
             }
             ImGui.NewLine();
         }
+    }
+
+    private static string TileName(BoardState.Tile tile)
+    {
+        var rotation = (tile & BoardState.Tile.RotatedEither) switch
+        {
+            BoardState.Tile.RotatedL => "・左轉",
+            BoardState.Tile.RotatedR => "・右轉",
+            _ => string.Empty,
+        };
+        var baseTile = tile & ~BoardState.Tile.RotatedEither;
+        var name = baseTile switch
+        {
+            BoardState.Tile.Unknown => "未知",
+            BoardState.Tile.Hidden => "未翻開",
+            BoardState.Tile.Blocked => "障礙",
+            BoardState.Tile.Empty => "空白",
+            BoardState.Tile.BoxTL => "禮物箱・左上",
+            BoardState.Tile.BoxTR => "禮物箱・右上",
+            BoardState.Tile.BoxBL => "禮物箱・左下",
+            BoardState.Tile.BoxBR => "禮物箱・右下",
+            BoardState.Tile.ChestTL => "寶箱・左上",
+            BoardState.Tile.ChestTR => "寶箱・右上",
+            BoardState.Tile.ChestBL => "寶箱・左下",
+            BoardState.Tile.ChestBR => "寶箱・右下",
+            BoardState.Tile.SwordsTL => "長劍・左上",
+            BoardState.Tile.SwordsTR => "長劍・右上",
+            BoardState.Tile.SwordsML => "長劍・左中",
+            BoardState.Tile.SwordsMR => "長劍・右中",
+            BoardState.Tile.SwordsBL => "長劍・左下",
+            BoardState.Tile.SwordsBR => "長劍・右下",
+            BoardState.Tile.Commander => "幻巧狐",
+            _ => tile.ToString(),
+        };
+        return name + rotation;
     }
 
     private void DrawSheet(Patterns.Sheet sheet, BoardState? board)

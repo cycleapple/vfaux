@@ -1,9 +1,10 @@
 {
   "Author": "veyn",
   "Name": "Easier Faux Hollows",
-  "Punchline": "Faux Hollows solver based on known patterns",
-  "Description": "Based on ezFauxHollows, but uses known patterns instead of general-purpose solver.",
+  "Punchline": "根據已知圖樣協助解開幻巧拼圖。",
+  "Description": "以 ezFauxHollows 為基礎，使用已知圖樣分析幻巧拼圖，而非通用求解器。",
   "InternalName": "vfaux",
   "ApplicableVersion": "any",
+  "RepoUrl": "https://github.com/cycleapple/vfaux/tree/api13-tw",
   "IconUrl": "https://raw.githubusercontent.com/awgil/vfaux/cc5a9c0564e07cc822b6f7617bd8983c82b8207f/icon.png"
 }

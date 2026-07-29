@@ -68,7 +68,7 @@ public sealed class Plugin : IDalamudPlugin
 
         _wnd = new(_board, _solver);
         WindowSystem.AddWindow(_wnd);
-        CommandManager.AddHandler("/vfaux", new CommandInfo((_, _) => _wnd.IsOpen = true) { HelpMessage = "Show plugin window" });
+        CommandManager.AddHandler("/vfaux", new CommandInfo((_, _) => _wnd.IsOpen = true) { HelpMessage = "開啟幻巧拼圖輔助視窗。" });
 
         AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "WeeklyPuzzle", SyncWithGameState);
         DalamudPluginInterface.UiBuilder.Draw += WindowSystem.Draw;
@@ -98,7 +98,7 @@ public sealed class Plugin : IDalamudPlugin
         NotificationManager.AddNotification(new()
         {
             Title = "Easier Faux Hollows",
-            Content = "Easier Faux Hollows is not compatible with ezFauxHollows",
+            Content = "Easier Faux Hollows 與 ezFauxHollows 不相容，請只啟用其中一個插件。",
             Type = Dalamud.Interface.ImGuiNotification.NotificationType.Error
         });
     }
